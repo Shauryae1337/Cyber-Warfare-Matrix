@@ -87,7 +87,7 @@ This framework is especially useful for:
 
 ## ⚠️ Disclaimer
 
-This matrix is a conceptual model based on a curated dataset. Cyber warfare is **fluid and ever-evolving**—new TTPs emerge constantly.  
+This matrix is a conceptual model. Cyber warfare is **fluid and ever-evolving**—new TTPs emerge constantly.  
 Use this matrix as a **foundational tool**—a living framework subject to ongoing refinement and updates.
 
 ---
