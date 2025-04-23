@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix of Cyber Warfare v0.1</title>
+
+
+
+
+<style>
+
+/* Import fonts (ensure internet connection or host locally) */
+@import url('https://fonts.googleapis.com/css2?family=Oxanium:wght@400;600;700&family=Roboto+Mono:wght@400;500&display=swap');
+
+
+:root {
+    /* Define theme colors for easier management */
+    --base-black: #000000;
+    --dark-grey: #1a1a1a;
+    --glass-bg-base: rgba(30, 30, 30, 0.5); /* Base transparency for glass */
+    --glass-bg-header: rgba(50, 10, 10, 0.6); /* Darker red tint for headers */
+    --glass-border: rgba(255, 255, 255, 0.15); /* Subtle light border for glass */
+    --accent-red: #ff3333;
+    --accent-red-hover: #ff5555;
+    --text-primary: #e0e0e0;
+    --text-secondary: #b0b0b0;
+    --text-highlight: #ff6666; /* Lighter red for IDs etc. */
+}
+
+body {
+    font-family: 'Roboto Mono', monospace, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 25px; /* More padding around the content */
+    color: var(--text-primary);
+    line-height: 2.5;
+    overflow-x: hidden;
+
+    /* --- Distinct Background for Glassmorphism --- */
+    background-color: var(--base-black);
+    background-image:
+        /* Subtle noise overlay */
+        /* Uncomment for noise texture: */
+        /* url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%239C92AC' fill-opacity='0.05' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E"), */
+
+        /* Red glowing effects from corners */
+        radial-gradient(ellipse at top left, rgba(180, 0, 0, 0.35), transparent 65%),
+        radial-gradient(ellipse at bottom right, rgba(150, 0, 0, 0.3), transparent 70%),
+
+        /* Dark subtle pattern (optional - can replace with a background image url) */
+        repeating-linear-gradient( /* Faint Diagonal Lines */
+            -55deg,
+            rgba(15, 15, 15, 0.1),
+            rgba(15, 15, 15, 0.1) 1px,
+            transparent 1px,
+            transparent 12px
+        );
+    background-attachment: fixed;
+    background-size: auto, auto, auto, 15px 15px; /* Adjust size for pattern */
+}
+
+h1 {
+    text-align: center;
+    font-family: 'Oxanium', sans-serif;
+    color: var(--accent-red);
+    /* Enhanced glow, slightly softer */
+    text-shadow: 0 0 2px var(--accent-red),
+                 0 0 20px rgba(255, 51, 51, 0.5);
+    margin-bottom: 45px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    border-bottom: 1px solid rgba(255, 51, 51, 0.2); /* Thinner border */
+    padding-bottom: 18px;
+    text-transform: uppercase;
+}
+
+/* --- Styles for Matrix Layout --- */
+.matrix-container {
+    display: flex;
+    overflow-x: auto;
+    margin-top: 30px;
+    background: transparent; /* Container itself is transparent */
+    border: none;
+    padding: 10px 5px; /* Padding adjusted */
+    gap: 12px; /* Wider gap for distinct columns */
+}
+
+/* --- Base Glass Styling --- */
+.glass-panel {
+    /* Common glass properties */
+    backdrop-filter: blur(12px); /* Standard blur */
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 0; /* Sharp corners */
+    /* Subtle light border defining the glass edge */
+    border: 1px solid var(--glass-border);
+    /* Soft shadow to lift the panel */
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tactic-column {
+    flex: 1;
+    min-width: 250px; /* Wider columns */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* Clip children */
+    /* Applying glass style */
+    background: var(--glass-bg-base);
+    /* Inherit common glass properties */
+    /* Removed individual border/shadow here */
+    position: relative; /* For pseudo-elements if needed */
+}
+/* Apply glass panel style directly to the column */
+.tactic-column {
+    /* Apply base glass styles defined above */
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-radius: 0;
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tactic-column:hover {
+     /* Slightly change background or border on hover */
+     background: rgba(40, 40, 40, 0.55); /* Slightly less transparent */
+     border-color: rgba(255, 255, 255, 0.25); /* Brighter border */
+}
+
+
+/* Tactic header styling */
+.tactic-header {
+    /* Apply glass panel style */
+    /* Note: border applied via .glass-panel */
+    padding: 15px 18px;
+    text-align: center;
+    color: #ffffff;
+    font-family: 'Oxanium', sans-serif;
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    text-transform: uppercase;
+
+    /* Specific glass styling for header */
+    background: var(--glass-bg-header); /* Darker red tint */
+    backdrop-filter: blur(15px); /* Slightly more blur for header */
+    -webkit-backdrop-filter: blur(15px);
+    /* Override base glass border for bottom separation */
+    border: none; /* Remove the all-around border */
+    border-bottom: 1px solid var(--glass-border); /* Keep only bottom border */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35); /* Adjusted shadow */
+    border-radius: 0; /* Ensure sharp top corners if sticky */
+}
+
+.tactic-header .tactic-description {
+    font-size: 0.85em;
+    font-weight: 400;
+    margin-top: 12px;
+    text-align: left;
+    padding: 12px;
+    /* Slightly different inset look - no full glass panel */
+    background-color: rgba(0, 0, 0, 0.3); /* Darker inset */
+    border-radius: 0;
+    color: var(--text-secondary);
+    border: 1px solid rgba(255, 255, 255, 0.1); /* Even fainter border */
+    line-height: 1.5;
+    text-transform: none;
+    font-family: 'Roboto Mono', monospace;
+}
+
+/* Technique cell styling */
+.technique-cell {
+    padding: 14px 18px; /* Increased padding */
+    text-align: left;
+    vertical-align: top;
+    min-height: 70px; /* Increased height */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative; /* Needed for ::before */
+
+    /* Glassy cell - slightly less opaque than column */
+    background: rgba(45, 45, 45, 0.4); /* Adjust alpha as needed */
+    backdrop-filter: blur(10px); /* Can vary blur */
+    -webkit-backdrop-filter: blur(10px);
+
+    /* Cell separator using border */
+    border: none; /* Remove default border */
+    border-top: 1px solid var(--glass-border); /* Light separator */
+
+    transition: background-color 0.2s ease-out, border-top-color 0.2s ease-out;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+
+/* Hover effect for technique cells */
+.technique-cell:hover {
+  background: rgba(255, 51, 51, 0.15); /* Red tint on hover */
+  border-top-color: var(--accent-red-hover); /* Highlight separator */
+  color: #fff;
+}
+
+/* Red indicator bar on hover */
+.technique-cell::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 0px; /* Hidden by default */
+    background-color: var(--accent-red);
+    transition: width 0.2s ease-out;
+    opacity: 0; /* Hidden by default */
+}
+.technique-cell:hover::before {
+    width: 4px; /* Show bar on hover */
+    opacity: 1;
+}
+
+
+.technique-id {
+    font-family: 'Roboto Mono', monospace, 'Courier New', Courier;
+    font-size: 0.8em;
+    color: var(--text-highlight);
+    margin-bottom: 4px;
+    opacity: 0.9;
+    font-weight: 500;
+}
+
+.technique-name {
+    font-weight: 600;
+    font-size: 0.95em;
+    color: var(--text-primary); /* Use primary text color */
+     /* Inherit body font */
+}
+
+/* Styles for the details popup/expandable section */
+.technique-details {
+    /* Apply glass panel style */
+    display: none;
+    margin: 20px; /* More margin */
+    padding: 25px; /* More padding */
+    font-size: 0.9em;
+    line-height: 1.6;
+    color: var(--text-primary);
+
+    /* Specific glass styling for details */
+    background: rgba(20, 20, 20, 0.6); /* Darker, more opaque glass */
+    backdrop-filter: blur(18px); /* More blur for deeper layer */
+    -webkit-backdrop-filter: blur(18px);
+    border: 1px solid var(--glass-border); /* Standard light border */
+    border-radius: 0;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4); /* Deeper shadow */
+}
+
+
+.technique-details h4 {
+    margin-top: 18px;
+    margin-bottom: 12px;
+    font-family: 'Oxanium', sans-serif;
+    color: var(--accent-red);
+    border-bottom: 1px solid rgba(255, 51, 51, 0.3); /* Red underline */
+    padding-bottom: 10px;
+    font-weight: 600;
+    letter-spacing: 1.0px;
+    text-transform: uppercase;
+}
+.technique-details h4:first-child {
+    margin-top: 0;
+}
+
+.technique-details p,
+.technique-details ul {
+    margin-top: 0;
+    margin-bottom: 18px;
+}
+
+.technique-details ul {
+    list-style-type: none;
+    padding-left: 15px;
+}
+.technique-details li {
+    margin-bottom: 10px;
+    padding-left: 25px;
+    position: relative;
+}
+/* Futuristic bullet */
+.technique-details li::before {
+    content: '»'; /* Double arrow or similar */
+    position: absolute;
+    left: 0;
+    top: 1px;
+    color: var(--accent-red);
+    font-size: 1.1em;
+    font-weight: bold;
+}
+
+.technique-details li strong { /* Sub-technique ID */
+    font-family: 'Roboto Mono', monospace, 'Courier New', Courier;
+    color: var(--text-highlight); /* Lighter red */
+    font-weight: 500;
+    margin-right: 10px;
+}
+
+ /* Style for missing data */
+.missing-data {
+    font-style: normal;
+    color: var(--text-secondary);
+    /* Inset look, not full glass */
+    background-color: rgba(30, 30, 30, 0.3);
+    padding: 12px 18px;
+    border-radius: 0;
+    /* Use subtle red border */
+    border: 1px solid rgba(255, 51, 51, 0.2);
+    margin-top: 15px;
+}
+
+/* --- Minimal Scrollbar Styling (Webkit) --- */
+::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(10, 10, 10, 0.5); /* Dark track */
+    border-radius: 0;
+}
+::-webkit-scrollbar-thumb {
+    background: var(--accent-red); /* Bright red thumb */
+    border-radius: 0; /* Sharp */
+    border: 1px solid rgba(0, 0, 0, 0.5); /* Dark border for definition */
+}
+::-webkit-scrollbar-thumb:hover {
+    background: var(--accent-red-hover); /* Lighter red on hover */
+}
+
+</style>
+
+
+
+</head>
+<body>
+
+    <h1>Cyber Warfare Matrix 1.0</h1>
+
+    <div class="matrix-container">
+
+        <div class="tactic-column">
+            <div class="tactic-header">
+                Attacking Infrastructure (TA001)
+                <div class="tactic-description">
+                    The strategic goal is to weaken the adversary by disrupting or destroying the essential services and systems their society, economy, and military rely upon. This can have immediate and cascading physical and psychological effects.
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1001">
+                <span class="technique-id">T1001</span>
+                <span class="technique-name">Nuclear Infrastructure</span>
+                <div class="technique-details" id="details-T1001">
+                    <h4>Strategist Description</h4>
+                    <p>To strategically leverage, degrade, disrupt, or gain control over an adversary's nuclear assets, including power generation, research facilities, or weapons systems, for strategic advantage or sabotage. The high impact potential makes this a critical target.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Industrial Control Systems (ICS) / Supervisory Control and Data Acquisition (SCADA) networks, Safety Instrumented Systems (SIS), plant-specific IT/OT networks, physical access controls, the supply chain for critical components, and personnel (insiders). These systems are often highly specialized and vulnerable if exposed.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1001.001:</strong> Control System Malware Injection: Deploying malware (like Stuxnet) specifically designed to manipulate or damage industrial control systems that manage nuclear processes.</li>
+                        <li><strong>T1001.002:</strong> Network Exploitation for Espionage/Access: Gaining unauthorized access to nuclear facility networks to steal data, map systems, or establish persistent access for future operations.</li>
+                        <li><strong>T1001.003:</strong> Physical Sabotage via Insider/Special Forces: Utilizing human assets with physical access to directly damage or interfere with nuclear infrastructure components.</li>
+                        <li><strong>T1001.004:</strong> Supply Chain Interdiction: Interfering with the delivery or integrity of equipment and software required for nuclear infrastructure operations.</li>
+                        <li><strong>T1001.005:</strong> DoS against Safety/Control Systems: Overwhelming or disrupting the communication or processing capabilities of safety and control systems, potentially leading to dangerous conditions or shutdowns.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1002">
+                <span class="technique-id">T1002</span>
+                <span class="technique-name">Telecom Infrastructure</span>
+                <div class="technique-details" id="details-T1002">
+                    <h4>Strategist Description</h4>
+                    <p>To disrupt, intercept, or degrade an adversary's command, control, and communications (C3) capabilities, as well as impacting public communication networks to sow confusion or prevent coordination. Essential for military operations and societal function.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Core network routers and switches, cellular infrastructure (Base Transceiver Stations (BTS), Mobile Switching Centers (MSC)), satellite communication links, Domain Name System (DNS) infrastructure, Internet Exchange Points (IXPs), and physical fiber optic cable networks. These are the backbone of modern communication.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1002.001:</strong> Network Infrastructure DDoS: Flooding key network components with traffic to overload them and prevent legitimate communication.</li>
+                        <li><strong>T1002.002:</strong> Physical Destruction of Key Nodes: Physically attacking critical telecommunications facilities, such as switching centers or fiber optic cable hubs.</li>
+                        <li><strong>T1002.003:</strong> Lawful Intercept System Exploitation: Compromising systems designed for legal surveillance to conduct unauthorized interception of communications.</li>
+                        <li><strong>T1002.004:</strong> BGP Hijacking: Manipulating Border Gateway Protocol routing tables to reroute internet traffic, potentially intercepting or blackholing communications.</li>
+                        <li><strong>T1002.005:</strong> Widespread Comms Jamming (RF Spectrum): Using radio frequency jamming devices to disrupt cellular, satellite, or other wireless communications over a wide area.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1003">
+                <span class="technique-id">T1003</span>
+                <span class="technique-name">Medical Infrastructure</span>
+                 <div class="technique-details" id="details-T1003">
+                    <h4>Strategist Description</h4>
+                    <p>To degrade adversary healthcare capacity, induce public panic, and/or steal valuable Personally Identifiable Information (PII) or medical research by targeting hospitals, clinics, and public health systems. Impacts both national health security and individual well-being.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Hospital networks (IT and connected medical devices), Electronic Health Record (EHR) systems, Internet of Medical Things (IoMT) devices, public health databases, and pharmaceutical supply chains. These systems hold sensitive data and are critical for patient care.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1003.001:</strong> Ransomware targeting Hospitals: Deploying ransomware to encrypt critical hospital systems and patient data, demanding payment to restore access and disrupting healthcare delivery. (Frequent real-world example)</li>
+                        <li><strong>T1003.002:</strong> Mass Patient Data Exfiltration: Stealing large volumes of sensitive patient health information for espionage, sale on the dark web, or leveraging for other operations.</li>
+                        <li><strong>T1003.003:</strong> Disruption of Emergency Services Dispatch: Interfering with systems used to dispatch ambulances and other emergency responders, delaying critical aid.</li>
+                        <li><strong>T1003.004:</strong> Tampering with Medical Device Operations: Manipulating the software or settings of connected medical devices (e.g., infusion pumps, pacemakers) to cause harm or disrupt treatment.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1004">
+                <span class="technique-id">T1004</span>
+                <span class="technique-name">Energy Infrastructure</span>
+                 <div class="technique-details" id="details-T1004">
+                    <h4>Strategist Description</h4>
+                    <p>To cripple an adversary's economy and military capability by disrupting the generation, transmission, or distribution of power or fuel. Energy is fundamental to almost all modern activity.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Grid control systems (Energy Management Systems (EMS) / SCADA), pipeline monitoring and control systems, power generation units (power plants), electrical substations, and fuel depots/terminals. These are the operational components of the energy supply chain.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1004.001:</strong> Grid Destabilization via ICS Manipulation: Gaining access to and manipulating industrial control systems to cause power outages, grid instability, or equipment damage. (Example: Attacks on Ukraine's power grid)</li>
+                        <li><strong>T1004.002:</strong> Physical Attack on Critical Substations: Physically attacking electrical substations to cause widespread and potentially long-lasting power disruptions.</li>
+                        <li><strong>T1004.003:</strong> Disruption of Fuel Pipeline Operations: Interfering with the control systems or logistics of fuel pipelines, impacting the distribution of gasoline, natural gas, or other fuels. (Example: Colonial Pipeline ransomware attack, though primarily financial, had this effect)</li>
+                        <li><strong>T1004.004:</strong> Coordinated Malware/Wiper Attack on Energy Sector IT/OT: Deploying destructive malware targeting both the information technology (IT) and operational technology (OT) networks of energy companies to cause widespread disruption.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1005">
+                <span class="technique-id">T1005</span>
+                <span class="technique-name">Transport Infrastructure</span>
+                 <div class="technique-details" id="details-T1005">
+                    <h4>Strategist Description</h4>
+                    <p>To impede an adversary's military mobilization, logistics, and economic activity by disrupting key transportation nodes and networks. Impacts the movement of goods, people, and military assets.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Air Traffic Control (ATC) systems, railway signaling and control systems, port management systems, urban traffic management systems, and logistics/supply chain databases. The interconnected nature of these systems creates single points of failure.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1005.001:</strong> ATC System Interference/DoS: Disrupting air traffic control communications or systems to prevent or delay flights.</li>
+                        <li><strong>T1005.002:</strong> Railway Network Disruption: Tampering with railway signaling, switching, or scheduling systems to cause delays, collisions, or halt train movements.</li>
+                        <li><strong>T1005.003:</strong> Port Operations Sabotage (Cyber/Physical): Disrupting the digital systems (terminal management, logistics) or physically damaging equipment at major ports to slow down or stop maritime trade.</li>
+                        <li><strong>T1005.004:</strong> Disruption of Logistics and Supply Chain Management Systems: Attacking the software and networks used to track and manage the movement of goods across various transport modes.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1006">
+                <span class="technique-id">T1006</span>
+                <span class="technique-name">Educational Infrastructure</span>
+                <div class="technique-details" id="details-T1006">
+                    <h4>Strategist Description</h4>
+                    <p>To undermine the adversary's future capabilities via disruption of research and development, and/or to conduct espionage or influence operations targeting students, faculty, and research data. Impacts long-term innovation and societal cohesion.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>University networks, research databases, Student Information Systems (SIS), Learning Management Systems (LMS), and campus Wi-Fi networks. Educational institutions hold valuable intellectual property and demographic data.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1006.001:</strong> Exfiltration of Sensitive Research: Stealing valuable academic or sponsored research data, including scientific findings, technological developments, or intellectual property.</li>
+                        <li><strong>T1006.002:</strong> Disruption of Academic Operations via Ransomware/DoS: Using ransomware or denial-of-service attacks to disrupt classes, research, administrative functions, and access to online resources.</li>
+                        <li><strong>T1006.003:</strong> Influence Operations targeting Students/Faculty: Spreading propaganda, misinformation, or divisive narratives through campus networks and social media to shape opinions or incite activism.</li>
+                        <li><strong>T1006.004:</strong> Compromise of Campus Networks for Pivoting: Using less secure university networks as a stepping stone to gain access to more secure government or corporate networks connected to the institution.</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="technique-cell" data-target="details-T1007">
+                <span class="technique-id">T1007</span>
+                <span class="technique-name">Critical Industrial Infrastructure</span>
+                 <div class="technique-details" id="details-T1007">
+                    <h4>Strategist Description</h4>
+                    <p>To disrupt the adversary's industrial production capacity, potentially cause environmental damage, or induce significant economic loss by targeting key manufacturing facilities and industrial plants beyond energy.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Industrial Control Systems (ICS) including Distributed Control Systems (DCS) and Programmable Logic Controllers (PLC), Safety Instrumented Systems (SIS), Manufacturing Execution Systems (MES), and control systems for facilities like water treatment plants, chemical plants, and manufacturing lines. Safety and operational integrity are critical.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1007.001:</strong> Manipulation of Industrial Processes: Altering operational parameters within ICS/SCADA systems to cause equipment damage, production halts, or create hazardous conditions. (Example: TRITON/TRISIS malware targeting safety systems)</li>
+                        <li><strong>T1007.002:</strong> Sabotage via SIS compromise: Bypassing or manipulating Safety Instrumented Systems designed to prevent accidents, potentially leading to catastrophic failures or environmental releases.</li>
+                        <li><strong>T1007.003:</strong> Disruption of Water Treatment/Distribution: Interfering with the control systems for water purification or distribution, impacting public health or access to clean water. (Example: Attempted poisoning of Florida water supply)</li>
+                        <li><strong>T1007.004:</strong> Theft of Industrial Process IP: Stealing proprietary manufacturing processes, designs, or trade secrets related to industrial production.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1008">
+                <span class="technique-id">T1008</span>
+                <span class="technique-name">Financial Infrastructure</span>
+                <div class="technique-details" id="details-T1008">
+                    <h4>Strategist Description</h4>
+                    <p>To cause systemic financial instability, disrupt critical financial services, or undermine public confidence in the adversary's financial system. Directly impacts economic stability and daily commerce.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Interbank payment systems (e.g., SWIFT), stock exchange core trading and settlement systems, central bank systems, and financial clearing houses. These are the core mechanisms for transferring value and managing markets.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1008.001:</strong> Disruption of Payment Clearing Systems: Interfering with the systems that process and settle financial transactions between banks, halting or delaying payments. (Example: Attacks on SWIFT)</li>
+                        <li><strong>T1008.002:</strong> Manipulation of Stock Exchange Matching Engines: Gaining access to systems that match buy and sell orders to manipulate stock prices or market data.</li>
+                        <li><strong>T1008.003:</strong> DoS against Core Financial Infrastructure Nodes: Flooding critical financial network components or servers with traffic to make them unavailable, disrupting trading or banking operations.</li>
+                        <li><strong>T1008.004:</strong> Compromise of Central Bank Networks: Gaining unauthorized access to central bank systems for espionage, data manipulation, or disruption of monetary policy functions.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1009">
+                <span class="technique-id">T1009</span>
+                <span class="technique-name">Space Infrastructure</span>
+                <div class="technique-details" id="details-T1009">
+                    <h4>Strategist Description</h4>
+                    <p>To deny, degrade, or disrupt the adversary's space-based assets, particularly those critical for military C4ISR (Command, Control, Communications, Computers, Intelligence, Surveillance, and Reconnaissance) and PNT (Positioning, Navigation, and Timing) which are vital for modern warfare and many civilian applications.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Satellite control links (Telemetry, Tracking, and Command - TT&C), ground control stations, PNT signals (like GPS/GNSS), and the satellite payloads/buses themselves. Space assets are increasingly integrated into critical functions.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1009.001:</strong> Uplink/Downlink Jamming: Interfering with the radio signals used to communicate with satellites, preventing data transmission or control.</li>
+                        <li><strong>T1009.002:</strong> PNT Signal Spoofing/Jamming: Transmitting false PNT signals or overwhelming legitimate signals to disrupt navigation and timing systems. (Example: GPS jamming in conflict zones)</li>
+                        <li><strong>T1009.003:</strong> Ground Station Compromise: Gaining unauthorized access to the facilities and systems used to control satellites from Earth.</li>
+                        <li><strong>T1009.004:</strong> Satellite Control Hijacking: Taking control of a satellite by compromising its command and control systems.</li>
+                        <li><strong>T1009.005:</strong> Directed Energy Attack against Satellites: Using ground-based or space-based directed energy weapons (e.g., lasers) to damage or disable satellites.</li>
+                        <li><strong>T1009.006:</strong> Kinetic ASAT Strike: Physically destroying a satellite using a missile or other projectile from Earth or space (less a cyber technique, but included in the original context of space attack capabilities).</li>
+                    </ul>
+                </div>
+            </div>
+            </div>
+
+        <div class="tactic-column">
+            <div class="tactic-header">
+                Attacking R&D / Tech (TA002)
+                <div class="tactic-description">
+                    The strategic goal is to impede an adversary's technological progress and military/economic competitiveness by stealing their cutting-edge research and development data or disrupting their innovation processes.
+                </div>
+            </div>
+             <div class="technique-cell" data-target="details-T1010">
+                <span class="technique-id">T1010</span>
+                <span class="technique-name">R&D Institutions</span>
+                 <div class="technique-details" id="details-T1010">
+                    <h4>Strategist Description</h4>
+                    <p>To exfiltrate cutting-edge research, scientific findings, and technological data from adversary academic, government, and non-profit research laboratories. This bypasses costly and time-consuming internal R&D efforts.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>University research networks, government laboratory systems, online collaboration portals, and High-Performance Computing (HPC) clusters. These environments often house valuable, pre-publication research.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1010.001:</strong> Persistent Espionage via Network Implants: Establishing long-term, covert access to research networks using malware and backdoors to continuously steal data.</li>
+                        <li><strong>T1010.002:</strong> Spear Phishing targeting Researchers: Sending highly targeted phishing emails to deceive researchers into revealing credentials or installing malware.</li>
+                        <li><strong>T1010.003:</strong> Exploitation of External-Facing Research Applications: Finding and exploiting vulnerabilities in web portals, databases, or other applications used by researchers that are accessible from the internet.</li>
+                        <li><strong>T1010.004:</strong> Theft of Pre-publication Research: Targeting systems containing research results and findings before they are publicly published or patented.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1011">
+                <span class="technique-id">T1011</span>
+                <span class="technique-name">Corporate R&D Centers</span>
+                 <div class="technique-details" id="details-T1011">
+                    <h4>Strategist Description</h4>
+                    <p>To conduct industrial espionage, specifically targeting private sector companies to steal trade secrets, proprietary technology, product designs, and R&D data for economic and/or military gain.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Corporate networks (both IT and OT), dedicated R&D databases, product design repositories, partner collaboration portals, and employee endpoints and communication channels.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1011.001:</strong> Long-term APT Operations for IP Theft: Executing Advanced Persistent Threat (APT) campaigns that maintain covert access to corporate networks over extended periods specifically to identify and steal intellectual property.</li>
+                        <li><strong>T1011.002:</strong> Insider Recruitment for Espionage: Identifying, recruiting, and tasking individuals within target companies to steal and provide sensitive R&D data.</li>
+                        <li><strong>T1011.003:</strong> Supply Chain Compromise targeting R&D Tools: Injecting malicious code or hardware into software or equipment used in the R&D process before it reaches the target company.</li>
+                        <li><strong>T1011.004:</strong> Social Engineering of Key R&D Personnel: Manipulating employees with access to sensitive R&D information through psychological tactics to gain access or information.</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="technique-cell" data-target="details-T1012">
+                <span class="technique-id">T1012</span>
+                <span class="technique-name">Pharma & Vaccine</span>
+                 <div class="technique-details" id="details-T1012">
+                    <h4>Strategist Description</h4>
+                    <p>To steal valuable pharmaceutical formulations, clinical trial data, and manufacturing processes, or to sabotage vaccine/drug production, for strategic health, economic, or even coercive advantage. Critical during health crises.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Clinical trial databases, drug formulation repositories, pharmaceutical manufacturing control systems, and regulatory submission systems. The data and processes in this sector are highly valuable.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1012.001:</strong> Exfiltration of Clinical Trial Results: Stealing data from ongoing or completed clinical trials to gain insights into drug efficacy, safety, or regulatory approval status.</li>
+                        <li><strong>T1012.002:</strong> Theft of Proprietary Drug Formulas: Obtaining secret chemical compositions and manufacturing processes for profitable drugs or vaccines.</li>
+                        <li><strong>T1012.003:</strong> Sabotage of Vaccine/Drug Manufacturing Processes: Interfering with the automated control systems or data integrity in manufacturing plants to ruin batches or halt production.</li>
+                        <li><strong>T1012.004:</strong> Espionage targeting Bio-Pharma Researchers: Targeting the personal and professional communications and systems of key researchers to gain insights into their work or recruit them as sources.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1013">
+                <span class="technique-id">T1013</span>
+                <span class="technique-name">Agriculture Tech</span>
+                <div class="technique-details" id="details-T1013">
+                    <h4>Strategist Description</h4>
+                    <p>To steal innovations in agriculture technology (AgTech), such as genetically modified organisms (GMO) data, precision farming techniques, or automation systems, and/or to disrupt adversary food production capabilities. Impacts food security and economic competitiveness in agriculture.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>AgTech company networks, genetic databases related to crops and livestock, farm management systems, and industrial control systems used in automated farming equipment or processing plants.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1013.001:</strong> Theft of Proprietary Seed/Genetic Data: Stealing intellectual property related to genetically modified seeds, breeding programs, or other agricultural genetic research.</li>
+                        <li><strong>T1013.002:</strong> Disruption of Precision Agriculture Systems: Interfering with the digital systems used for optimized planting, fertilizing, irrigation, or harvesting, reducing yields or causing equipment failure.</li>
+                        <li><strong>T1013.003:</strong> Sabotage of Food Production Research: Disrupting or destroying research aimed at improving crop yields, disease resistance, or food processing efficiency.</li>
+                        <li><strong>T1013.004:</strong> Introduction of Agricultural Malware/Pathogens: Introducing digital instructions or potentially even biological agents (via compromised systems) that could harm crops or livestock, although the latter is less a cyber technique alone.</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="technique-cell" data-target="details-T1014">
+                <span class="technique-id">T1014</span>
+                <span class="technique-name">Military and Defense R&D</span>
+                 <div class="technique-details" id="details-T1014">
+                    <h4>Strategist Description</h4>
+                    <p>To acquire the adversary's military technology secrets, weapon designs, performance data, and classified research data. This directly aims to neutralize or counter military advantages.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Defense contractor networks, classified government networks handling defense programs, weapon design systems (CAD/CAM), and military simulation/testing environments. These are highly sensitive and protected systems.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1014.001:</strong> Compromise of Defense Contractor Networks: Targeting private companies that build or design military equipment to steal blueprints, specifications, and performance data. (Example: APT1 style campaigns targeting defense contractors)</li>
+                        <li><strong>T1014.002:</strong> Exfiltration of Classified Weapon Blueprints: Stealing highly sensitive design documents and technical specifications for advanced weaponry. (Example: Reported theft of F-35 data)</li>
+                        <li><strong>T1014.003:</strong> Spear Phishing targeting Cleared Personnel: Targeting individuals with security clearances working on sensitive defense projects through tailored phishing attacks.</li>
+                        <li><strong>T1014.004:</strong> Air-Gap Bridging techniques: Employing sophisticated methods (e.g., infected USB drives, specialized malware) to transfer data out of highly secure, air-gapped networks that are physically isolated from the internet.</li>
+                    </ul>
+                </div>
+            </div>
+            </div>
+
+        <div class="tactic-column">
+            <div class="tactic-header">
+                Attacking Economy (TA003)
+                 <div class="tactic-description">
+                     The strategic goal is to inflict economic damage on the adversary, whether by direct financial theft, disrupting markets, interfering with commerce, or undermining confidence in their financial stability.
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1015">
+                <span class="technique-id">T1015</span>
+                <span class="technique-name">Banking Systems</span>
+                <div class="technique-details" id="details-T1015">
+                    <h4>Strategist Description</h4>
+                    <p>To generate illicit revenue, disrupt essential financial services, or undermine public trust and confidence in the adversary's banking sector. Can fund other operations or cause widespread inconvenience and loss.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Online banking portals, Automated Teller Machine (ATM) networks, SWIFT interfaces, core banking systems, and mobile banking platforms. These are the interfaces and back-end systems handling monetary transactions.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1015.001:</strong> Large-Scale Fraudulent Transfers: Initiating unauthorized transfers of funds from bank accounts, often involving compromising bank networks or credentials. (Example: Lazarus Group attacks on banks)</li>
+                        <li><strong>T1015.002:</strong> ATM Cash-out Attacks: Compromising bank systems to manipulate ATM withdrawal limits and allow criminals to withdraw large amounts of cash rapidly from many machines.</li>
+                        <li><strong>T1015.003:</strong> Ransomware targeting Bank Operations: Encrypting critical bank systems to disrupt services and extort payment, although banks are less likely to pay due to regulatory and trust concerns compared to other sectors.</li>
+                        <li><strong>T1015.004:</strong> Compromise of Online Banking Credentials en masse: Stealing login information for a large number of online banking users through phishing, malware, or data breaches.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1016">
+                <span class="technique-id">T1016</span>
+                <span class="technique-name">Stock Exchanges</span>
+                <div class="technique-details" id="details-T1016">
+                     <h4>Strategist Description</h4>
+                     <p>To disrupt market operations, manipulate stock prices for financial gain, or cause widespread economic panic and instability by targeting the infrastructure of stock exchanges. The speed and volume of transactions offer significant opportunities.</p>
+                     <h4>Key Attack Surfaces</h4>
+                     <p>Trading platforms, market data feeds, clearing and settlement systems, and broker networks. These systems facilitate the buying and selling of securities.</p>
+                     <h4>Core Sub-techniques</h4>
+                     <ul>
+                        <li><strong>T1016.001:</strong> Market Disruption via Trading System DoS/Manipulation: Overloading trading systems to prevent legitimate trading or manipulating order flow to cause artificial price swings.</li>
+                        <li><strong>T1016.002:</strong> Algorithmic Trading Manipulation: Exploiting vulnerabilities or gaining access to high-frequency trading systems to manipulate algorithms and market behavior.</li>
+                        <li><strong>T1016.003:</strong> Insider Trading based on Exfiltrated Data: Stealing non-public information (e.g., upcoming mergers, earnings reports) and using it for illegal insider trading.</li>
+                        <li><strong>T1016.004:</strong> Spreading False Rumors to Trigger Sell-offs: Using disinformation campaigns across media and social networks to spread false information intended to cause panic selling and market drops.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1017">
+                <span class="technique-id">T1017</span>
+                <span class="technique-name">Corporate Systems and Startups</span>
+                <div class="technique-details" id="details-T1017">
+                    <h4>Strategist Description</h4>
+                    <p>To inflict economic damage through disruption (e.g., ransomware), data theft (e.g., trade secrets, customer data), or direct sabotage, targeting a wide range of key industries and innovative startups. Impacts national productivity and competitiveness.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Corporate networks (both IT and OT), Enterprise Resource Planning (ERP) and Customer Relationship Management (CRM) systems, cloud service deployments, e-commerce platforms, and intellectual property repositories.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1017.001:</strong> Widespread Ransomware Campaigns: Deploying ransomware across many corporate networks within the adversary country to extort payments and cause significant operational disruption. (Common criminal and potentially state-sponsored activity)</li>
+                        <li><strong>T1017.002:</strong> Business Email Compromise (BEC) for Financial Fraud: Using compromised corporate email accounts to trick employees into making fraudulent wire transfers or sending sensitive financial information.</li>
+                        <li><strong>T1017.003:</strong> Theft of Customer Databases / Strategic Plans: Stealing sensitive customer information or internal strategic documents for espionage, competitive advantage, or sale.</li>
+                        <li><strong>T1017.004:</strong> Sabotage targeting Competitors/Startups: Directly disrupting the operations or destroying the data of companies considered strategic competitors or potential future threats.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1018">
+                <span class="technique-id">T1018</span>
+                <span class="technique-name">Financial Networks & Fin Tech</span>
+                <div class="technique-details" id="details-T1018">
+                    <h4>Strategist Description</h4>
+                    <p>To disrupt modern digital financial ecosystems, steal funds from emerging platforms, or undermine trust in financial technology innovations. Targets the evolving landscape of digital finance.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Payment gateways, mobile payment applications, cryptocurrency exchanges, FinTech APIs (Application Programming Interfaces), and blockchain infrastructure. These are newer, potentially less secure financial surfaces.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1018.001:</strong> Compromise of Payment Processors: Gaining access to systems that handle credit card and other electronic payments to steal data or redirect funds.</li>
+                        <li><strong>T1018.002:</strong> Exploiting Vulnerabilities in FinTech Platforms: Identifying and exploiting security flaws in mobile payment apps, online wallets, or other FinTech services.</li>
+                        <li><strong>T1018.003:</strong> Cryptocurrency Exchange Heists: Stealing large amounts of cryptocurrency from online exchanges by exploiting vulnerabilities or compromising user accounts. (Frequent criminal activity, sometimes attributed to state actors for funding)</li>
+                        <li><strong>T1018.004:</strong> Attacks on Open Banking APIs: Exploiting vulnerabilities in the APIs that allow different financial services to connect and share data, potentially leading to unauthorized access or data breaches.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1019">
+                <span class="technique-id">T1019</span>
+                <span class="technique-name">Landmark Financial Projects</span>
+                <div class="technique-details" id="details-T1019">
+                    <h4>Strategist Description</h4>
+                    <p>To derail major adversary economic projects, investments, or strategic initiatives through sabotage, disinformation, or targeted disruption. Aims to prevent specific long-term economic growth or influence policy.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Project management systems, investor portals, government agencies responsible for project approval/oversight, and potentially physical construction sites (where cyber intersects with physical).</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1019.001:</strong> Disinformation Campaigns targeting Investment: Spreading false or misleading information about a project's viability, risks, or ethical concerns to discourage investment or public support.</li>
+                        <li><strong>T1019.002:</strong> Cyber/Physical Sabotage of Project Execution: Using cyberattacks to disrupt project planning, logistics, or automated systems used in construction, or coordinating cyber efforts with physical sabotage.</li>
+                        <li><strong>T1019.003:</strong> Legal/Regulatory Obstruction via Influence Ops: Using influence tactics to manipulate legal or regulatory processes to delay or halt a project.</li>
+                        <li><strong>T1019.004:</strong> Compromise of Project Planning Data: Stealing sensitive project plans, schedules, budget information, or contract details for competitive advantage or to identify vulnerabilities for sabotage.</li>
+                    </ul>
+                </div>
+            </div>
+             </div> <div class="tactic-column">
+            <div class="tactic-header">
+                Attacking Government (TA004)
+                <div class="tactic-description">
+                     The strategic goal is to weaken the adversary government's authority, effectiveness, and legitimacy, potentially leading to internal instability, policy changes, or a shift in power.
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1020">
+                <span class="technique-id">T1020</span>
+                <span class="technique-name">Support Opposition</span>
+                <div class="technique-details" id="details-T1020">
+                    <h4>Strategist Description</h4>
+                    <p>To weaken the adversary government by empowering, resourcing, and directing internal opposition forces, potentially including political parties, dissident groups, or activist networks. Aims to create internal pressure and division.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Opposition political parties, dissident groups, activist networks, exiled communities, and covert funding channels (digital or physical).</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1020.001:</strong> Covert Financing and Resource Provision: Secretly providing financial support, equipment, training, or logistical resources to opposition groups.</li>
+                        <li><strong>T1020.002:</strong> Strategic Communications Support: Providing guidance, tools, or platforms to opposition groups to help them amplify their message and reach target audiences effectively.</li>
+                        <li><strong>T1020.003:</strong> Intelligence Sharing with Opposition: Providing opposition groups with intelligence that can be used to challenge the government, expose corruption, or plan activities.</li>
+                        <li><strong>T1020.004:</strong> Facilitating Safe Communication Channels: Providing secure communication tools or networks to opposition groups to help them evade government surveillance.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1021">
+                <span class="technique-id">T1021</span>
+                <span class="technique-name">Critical Government Infra</span>
+                <div class="technique-details" id="details-T1021">
+                    <h4>Strategist Description</h4>
+                    <p>To disrupt core government functions, conduct espionage against sensitive operations, or degrade decision-making capabilities by targeting critical government networks and systems. Impacts the state's ability to govern.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Secure government networks, ministry systems (e.g., foreign affairs, defense, finance), diplomatic communication systems, intelligence agency systems, and public-facing e-Government portals. These systems handle sensitive state information and provide essential public services.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1021.001:</strong> Espionage targeting Sensitive Ministries: Gaining unauthorized access to networks and systems within ministries handling foreign policy, defense strategy, intelligence, or economic planning to steal sensitive information. (Example: Targeting the U.S. State Department or similar agencies)</li>
+                        <li><strong>T1021.002:</strong> Disruption of Essential e-Government Services: Using cyberattacks (DoS, ransomware) to make online government services (e.g., tax filing, permit applications) unavailable to the public.</li>
+                        <li><strong>T1021.003:</strong> Compromise of Diplomatic Communication Systems: Intercepting or disrupting secure communication channels used by diplomats and embassies.</li>
+                        <li><strong>T1021.004:</strong> Wiper Attacks on Government Networks: Deploying destructive malware designed to erase data and render government systems inoperable. (Example: Attacks attributed to state actors against government entities)</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1022">
+                <span class="technique-id">T1022</span>
+                <span class="technique-name">Creating Political Instability</span>
+                <div class="technique-details" id="details-T1022">
+                    <h4>Strategist Description</h4>
+                    <p>To exacerbate existing internal divisions, erode public trust in institutions, and promote social unrest or chaos to weaken the adversary state from within. Focuses on manipulating the social and political landscape.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Social media platforms, traditional news media, online political forums, public protest movements, and fringe political/social groups. These are channels for public discourse and organization.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1022.001:</strong> Coordinated Disinformation Campaigns: Spreading false or misleading narratives across multiple platforms and channels to manipulate public opinion on sensitive political issues.</li>
+                        <li><strong>T1022.002:</strong> Amplification of Extreme Voices/Narratives: Using bots, fake accounts, or coordinated networks to artificially amplify the reach and perceived influence of extremist or divisive content.</li>
+                        <li><strong>T1022.003:</strong> Use of Agents Provocateurs: Deploying covert assets (online or potentially physical) to incite violence, radicalize individuals, or make legitimate protests appear extreme.</li>
+                        <li><strong>T1022.004:</strong> Staging False Flag Operations (Cyber/Physical): Conducting cyberattacks or physical incidents and falsely attributing them to an internal opposition group or another entity to sow mistrust and justify crackdowns.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1023">
+                <span class="technique-id">T1023</span>
+                <span class="technique-name">Influencing Electoral Systems</span>
+                <div class="technique-details" id="details-T1023">
+                    <h4>Strategist Description</h4>
+                    <p>To manipulate or discredit the adversary's electoral processes, aiming to achieve a preferred outcome, reduce voter turnout, or undermine the perceived legitimacy of democratic institutions and results. Attacks the core of democratic processes.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Voter databases, electronic voting machines, election result reporting systems, social media platforms (for influencing voters), and the internal communications/systems of political campaigns.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1023.001:</strong> Voter Database Manipulation/Leak: Altering voter registration data to disenfranchise voters or leaking sensitive voter information to sow fear or enable targeting. (Example: Reported attempts on voter registration systems)</li>
+                        <li><strong>T1023.002:</strong> Disinformation Targeting Voter Turnout/Preference: Spreading false information about polling locations, voting requirements, or candidates to discourage specific groups from voting or influence their choices.</li>
+                        <li><strong>T1023.003:</strong> Hacking Campaign Communications: Gaining unauthorized access to the internal emails, documents, or strategy of political campaigns to steal information or leak damaging content. (Example: DNC email leaks in 2016)</li>
+                        <li><strong>T1023.004:</strong> Tampering with Results Transmission/Reporting: Interfering with the digital systems used to transmit or tabulate election results to cast doubt on the outcome or alter counts (more challenging but a potential goal).</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="technique-cell" data-target="details-T1024">
+                <span class="technique-id">T1024</span>
+                <span class="technique-name">Anti National Elements</span>
+                <div class="technique-details" id="details-T1024">
+                    <h4>Strategist Description</h4>
+                    <p>To recruit, direct, resource, or enable domestic elements (such as extremists, separatists, or other illicit groups) engaged in activities harmful to the adversary state's security, stability, or territorial integrity. Leverages internal vulnerabilities.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Extremist online forums and platforms, radical political or social groups, separatist movements, and illicit networks involved in trafficking arms, finance, or personnel.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1024.001:</strong> Online Radicalization and Recruitment: Using online platforms to identify, radicalize, and recruit individuals into extremist or anti-state groups.</li>
+                        <li><strong>T1024.002:</strong> Provision of Material Support: Providing funding, weapons, training, or logistical support (potentially facilitated digitally) to anti-state elements.</li>
+                        <li><strong>T1024.003:</strong> Facilitation of Terrorist/Extremist Operations: Providing communication platforms, planning tools, or intelligence to facilitate the planning and execution of attacks or disruptive activities.</li>
+                        <li><strong>T1024.004:</strong> Ideological Guidance and Propaganda: Providing ideological justification, propaganda materials, and strategic guidance to shape the narrative and activities of anti-state groups.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1025">
+                <span class="technique-id">T1025</span>
+                <span class="technique-name">Non Government Orgs</span>
+                <div class="technique-details" id="details-T1025">
+                    <h4>Strategist Description</h4>
+                    <p>To neutralize, co-opt, or discredit Non-Governmental Organizations (NGOs) that are perceived as challenging state narratives, supporting opposition objectives, or working against the adversary's interests. Aims to suppress civil society and alternative voices.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>NGO networks, websites, donor databases, activist communication channels, social media profiles of staff and organizations, and partner organizations. NGOs often rely on digital communication and donor support.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1025.001:</strong> Discrediting NGOs via Information Operations: Spreading false information, rumors, or negative narratives about NGOs to undermine their credibility and public support.</li>
+                        <li><strong>T1025.002:</strong> Hacking/Doxing NGO Staff/Donors: Compromising the accounts and systems of NGO staff or donors to steal sensitive information and release it publicly (doxing) to intimidate them or disrupt funding.</li>
+                        <li><strong>T1025.003:</strong> Using Front NGOs for Intelligence/Influence: Creating or controlling seemingly independent NGOs to serve as cover for intelligence gathering or to promote the adversary's agenda.</li>
+                        <li><strong>T1025.004:</strong> Disrupting NGO Operations/Funding: Using cyberattacks (DoS, malware) to disrupt an NGO's ability to communicate, organize, or process donations.</li>
+                    </ul>
+                </div>
+            </div>
+        </div> <div class="tactic-column">
+            <div class="tactic-header">
+                Attacking Human Resources (TA005)
+                <div class="tactic-description">
+                     The strategic goal is to weaken the adversary by influencing, manipulating, or degrading their population. This can involve impacting social cohesion, morale, trust, or even long-term demographic trends, often through information and influence operations.
+                </div>
+            </div>
+             <div class="technique-cell" data-target="details-T1026">
+                <span class="technique-id">T1026</span>
+                <span class="technique-name">Narrating Social Media Propaganda</span>
+                <div class="technique-details" id="details-T1026">
+                    <h4>Strategist Description</h4>
+                    <p>To shape the adversary population's perception, incite specific actions (e.g., protests, distrust), or even recruit assets by controlling and amplifying specific narratives across social media platforms. Leverages the reach and influence of social platforms.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Major social media platforms (Facebook, Twitter, TikTok, Instagram, etc.), encrypted messaging applications (WhatsApp, Telegram), online forums, and influencer networks. These are the primary channels for rapid information dissemination.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1026.001:</strong> State-Sponsored Troll Farms / Botnets: Employing large groups of coordinated human or automated accounts to generate, share, and amplify propaganda content.</li>
+                        <li><strong>T1026.002:</strong> Micro-targeting Propaganda via Ad Platforms: Using sophisticated targeting capabilities of social media advertising platforms to deliver tailored propaganda messages to specific demographic or interest groups.</li>
+                        <li><strong>T1026.003:</strong> Creation/Amplification of Viral Disinformation: Designing emotionally resonant or sensational false content and using coordinated networks to ensure it spreads rapidly and widely.</li>
+                        <li><strong>T1026.004:</strong> Use of Deepfakes for Impersonation/Deception: Creating highly realistic fake audio, video, or images using AI to impersonate individuals or create fabricated events to deceive the public.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1027">
+                <span class="technique-id">T1027</span>
+                <span class="technique-name">Building Addictive Social Media Platforms</span>
+                <div class="technique-details" id="details-T1027">
+                    <h4>Strategist Description</h4>
+                    <p>To condition the adversary population's behavior, harvest valuable data, and reduce societal productivity or focus by creating or influencing social media environments that are intentionally addictive or polarizing. A long-term influence strategy.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Platform algorithms (content recommendation, notification systems), User Interface (UI) / User Experience (UX) design, data privacy policies, and content moderation policies. These are the underlying mechanics of the platforms.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1027.001:</strong> Algorithmic Tuning for Addiction/Polarization: Designing or influencing platform algorithms to prioritize content that maximizes engagement, even if it is sensational, emotionally charged, or divisive.</li>
+                        <li><strong>T1027.002:</strong> Exploitative Design Patterns (Dark Patterns): Implementing UI/UX elements that subtly manipulate users into spending more time on the platform, sharing more data, or viewing specific content.</li>
+                        <li><strong>T1027.003:</strong> Differential Content Exposure by Region: Tailoring the type and volume of content shown to users based on their geographic location to promote specific narratives or behaviors in targeted areas.</li>
+                        <li><strong>T1027.004:</strong> Mass Data Harvesting via Platform: Collecting vast amounts of user data (personal information, behavior, connections) through platform access or manipulation for surveillance, targeting, or analysis.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1028">
+                <span class="technique-id">T1028</span>
+                <span class="technique-name">Cultural Disruption & Collapse of Society</span>
+                <div class="technique-details" id="details-T1028">
+                    <h4>Strategist Description</h4>
+                    <p>To weaken the adversary's societal fabric and resilience by attacking core values, promoting internal divisions along social, cultural, or political lines, and degrading trust in national institutions, history, and traditions. Aims for long-term internal fragmentation.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Media narratives (news, entertainment), educational content (curricula, textbooks), social media discourse, the entertainment industry (movies, music), and political rhetoric. These shape public opinion and cultural norms.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1028.001:</strong> Promoting Cultural Relativism/Nihilism: Spreading narratives that undermine belief in objective truth, shared values, or the importance of cultural heritage.</li>
+                        <li><strong>T1028.002:</strong> Amplifying Inter-Group Conflict: Exaggerating and promoting divisions and animosity between different ethnic, religious, political, or social groups within the adversary country.</li>
+                        <li><strong>T1028.003:</strong> Discrediting National History/Symbols: Spreading revisionist history or negative interpretations of national symbols and founding narratives to erode national pride and unity.</li>
+                        <li><strong>T1028.004:</strong> Attacking Family Structures/Traditional Norms: Promoting narratives that challenge or denigrate traditional social structures and norms perceived as foundational to the adversary's society.</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="technique-cell" data-target="details-T1029">
+                <span class="technique-id">T1029</span>
+                <span class="technique-name">Misinformation Campaigns</span>
+                <div class="technique-details" id="details-T1029">
+                    <h4>Strategist Description</h4>
+                    <p>To erode the adversary population's ability to discern truth from falsehood, manipulate public opinion on key issues, and undermine trust in reliable information sources (media, government, science). Exploits cognitive biases and the speed of digital information.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>All media channels (social media, traditional news, search engines), closed messaging groups, and platforms leveraging AI for content generation. The entire information ecosystem is a target.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1029.001:</strong> Coordinated Spread of False Narratives: Systematically introducing and disseminating false or misleading stories, events, or statistics through coordinated networks of accounts and platforms.</li>
+                        <li><strong>T1029.002:</strong> Impersonation of Official Sources: Creating fake websites, social media accounts, or documents that mimic legitimate government agencies, news organizations, or experts to lend credibility to false information.</li>
+                        <li><strong>T1029.003:</strong> Use of AI for Mass Content Generation: Utilizing generative AI tools to rapidly produce large volumes of fake articles, social media posts, or visual content that is difficult to fact-check at scale.</li>
+                        <li><strong>T1029.004:</strong> Data Voids Exploitation: Identifying topics or questions for which limited reliable information exists online and flooding these ""data voids"" with disinformation.</li>
+                        <li><strong>T1029.005:</strong> Deepfake Campaigns: Using deepfake technology to create convincing fake videos or audio of individuals saying or doing things they never did, often used for blackmail, discrediting, or spreading false information.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1030">
+                <span class="technique-id">T1030</span>
+                <span class="technique-name">Funding & Supporting anti national campaigns</span>
+                <div class="technique-details" id="details-T1030">
+                    <h4>Strategist Description</h4>
+                    <p>To resource and amplify domestic campaigns or movements within the adversary country that are deemed harmful to its national security, stability, or interests. Provides the means and platform for disruptive activities.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Activist groups, Non-Governmental Organizations (NGOs), protest movements, online fundraising platforms, and alternative media outlets that support anti-state narratives.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1030.001:</strong> Covert Funding of Disruptive Groups: Secretly providing financial support to groups engaged in activities intended to undermine the state.</li>
+                        <li><strong>T1030.002:</strong> Providing Strategic Direction to Campaigns: Offering advice, planning assistance, or directing the focus and tactics of anti-state campaigns.</li>
+                        <li><strong>T1030.003:</strong> Media Amplification of Supported Campaigns: Using state-controlled or allied media outlets and social media networks to amplify the messages and activities of supported anti-state groups, making them appear more significant than they are.</li>
+                        <li><strong>T1030.004:</strong> Lawfare Support for Disruptive Actions: Providing legal resources or strategic guidance to anti-state groups to help them navigate or exploit the adversary's legal system to further their disruptive goals.</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="technique-cell" data-target="details-T1031">
+                <span class="technique-id">T1031</span>
+                <span class="technique-name">Disrupting National Identification Networks</span>
+                <div class="technique-details" id="details-T1031">
+                    <h4>Strategist Description</h4>
+                    <p>To sow chaos, enable illicit activities, and facilitate mass surveillance or control by compromising the adversary's national identity systems. Impacts civil administration, security, and individual rights.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>National ID databases, biometric systems (fingerprint, facial recognition), civil registries (birth, death, marriage), passport and visa systems, and online authentication portals that rely on national identity. These systems are central to state control and individual identity.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1031.001:</strong> Mass Exfiltration of PII/Biometrics: Stealing large volumes of sensitive Personally Identifiable Information (PII) and biometric data from national databases. (Example: OPM hack style breach)</li>
+                        <li><strong>T1031.002:</strong> Creation/Sale of Fake Identities: Using stolen data or system access to create fraudulent identities for espionage, crime, or infiltration.</li>
+                        <li><strong>T1031.003:</strong> Sabotage/Denial of Service of ID Systems: Disrupting the operation of identity systems to prevent citizens from accessing services, voting, or traveling, causing widespread chaos.</li>
+                        <li><strong>T1031.004:</strong> Enabling Clandestine Operations via compromised identities: Using stolen or fabricated identities to facilitate covert travel, access to restricted areas, or other clandestine activities within the adversary country.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1032">
+                <span class="technique-id">T1032</span>
+                <span class="technique-name">Inducing Population Decline using Infertility</span>
+                <div class="technique-details" id="details-T1032">
+                    <h4>Strategist Description</h4>
+                    <p>(Influence Operation) To influence the adversary population's demographic trends by promoting narratives or policies that discourage childbirth or raise unfounded fears about infertility, with the long-term goal of weakening the adversary's future human capital and economic/military potential.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Public health discourse channels, social media platforms, women's health forums, and environmental activism channels. These are used to disseminate targeted narratives.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1032.001:</strong> Disinformation linking vaccines/medicine to infertility: Spreading false claims and conspiracy theories suggesting that common medical interventions cause infertility.</li>
+                        <li><strong>T1032.002:</strong> Promoting anti-natalist social trends: Amplifying social narratives that discourage having children, often framed around economic hardship, environmental concerns, or personal freedom.</li>
+                        <li><strong>T1032.003:</strong> Exaggerating environmental threats to fertility: Spreading alarmist and potentially false information about environmental factors causing widespread infertility.</li>
+                        <li><strong>T1032.004:</strong> Advocating policies penalizing families: Covertly supporting or promoting policies within the adversary country that make it economically or socially difficult to raise children.</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="technique-cell" data-target="details-T1033">
+                <span class="technique-id">T1033</span>
+                <span class="technique-name">Inducing Population explosion</span>
+                <div class="technique-details" id="details-T1033">
+                    <h4>Strategist Description</h4>
+                    <p>(Influence Operation) To strain the adversary's resources, exacerbate social tensions, or shift demographics by promoting narratives or influencing policies that encourage high birth rates or mass migration, particularly among specific groups, potentially for political gain or destabilization.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Public policy debate forums (political discourse, think tanks), cultural and religious narrative channels (media, community leaders), and media outlets covering social issues and demographics.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1033.001:</strong> Promoting pro-natalist narratives in target groups: Using media and community channels to encourage specific demographic groups to have more children, often appealing to cultural or religious values.</li>
+                        <li><strong>T1033.002:</strong> Advocating for policies encouraging large families/migration: Covertly supporting or lobbying for government policies that provide incentives for larger families or facilitate mass immigration.</li>
+                        <li><strong>T1033.003:</strong> Disinformation minimizing integration challenges: Spreading false or misleading information that downplays the social, economic, or cultural challenges associated with rapid population growth or large-scale migration.</li>
+                        <li><strong>T1033.004:</strong> Exploiting demographic shifts for political gain: Using influence operations to highlight and exacerbate tensions arising from changing demographics for political leverage or division.</li>
+                    </ul>
+                </div>
+            </div>
+             <div class="technique-cell" data-target="details-T1034">
+                <span class="technique-id">T1034</span>
+                <span class="technique-name">Appealing Drugs & Alcohol to Youth</span>
+                <div class="technique-details" id="details-T1034">
+                    <h4>Strategist Description</h4>
+                    <p>To degrade the adversary's future human capital and social stability by normalizing, promoting, and potentially facilitating substance abuse among their youth population. Targets the well-being and productivity of the next generation.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Social media trends and influencers, entertainment media (movies, music, TV), online communities and forums frequented by youth, and potentially dark web marketplaces (less direct influence, more facilitation).</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1034.001:</strong> Social Media Campaigns Glamorizing Substance Use: Using influencers, viral content, and targeted advertising on social media to portray drug and alcohol use as cool, desirable, or harmless.</li>
+                        <li><strong>T1034.002:</strong> Normalization in Music/Movies: Influencing or promoting entertainment content that normalizes or glorifies substance abuse, particularly content popular with youth audiences.</li>
+                        <li><strong>T1034.003:</strong> Facilitating Access via Online Sales/Forums: Creating or promoting online platforms or forums where youth can find information on acquiring illicit substances (less direct influence, more harmful facilitation).</li>
+                        <li><strong>T1034.004:</strong> Targeting Youth with Substance-Related Ads/Content: Using data gathered online to specifically target young people with content or advertisements related to drugs and alcohol.</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T1035">
+                <span class="technique-id">T1035</span>
+                <span class="technique-name">Supporting Separatist Propaganda & Social Fault Lines</span>
+                <div class="technique-details" id="details-T1035">
+                    <h4>Strategist Description</h4>
+                    <p>(Influence Operation) To exploit and amplify specific social and political movements (as framed in the source data) within the adversary country to exacerbate existing societal divisions, promote internal conflict, and undermine stability or specific government policies. Uses existing social fault lines.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Social media activist networks, relevant Non-Governmental Organizations (NGOs), academic circles discussing social issues, media outlets covering social justice and environmental topics, and Political Action Committees (PACs) or similar funding bodies. These are channels for social and political discourse and action.</p>
+                    <h4>Core Sub-techniques</h4>
+                    <ul>
+                        <li><strong>T1035.001:</strong> Amplifying Radical Factions within Movements: Identifying and providing disproportionate visibility and support to the most extreme or divisive elements within a social or political movement.</li>
+                        <li><strong>T1035.002:</strong> Funding Controversial Protests/Actions: Covertly providing financial or logistical support for protests or activities that are likely to generate significant controversy or conflict.</li>
+                        <li><strong>T1035.003:</strong> Using Movement Rhetoric to Attack Adversary Government/Society: Adopting and weaponizing the language and grievances of a movement to criticize or attack the adversary's government, institutions, or societal norms.</li>
+                        <li><strong>T1035.004:</strong> Co-opting Movement Agendas for Geopolitical Goals: Manipulating the goals or narratives of a social movement to align with and serve the adversary's broader geopolitical objectives.</li>
+                    </ul>
+                </div>
+            </div>
+        </div> <div class="tactic-column">
+            <div class="tactic-header">
+                Strategic Supply Chain Compromise (TA006)
+                <div class="tactic-description">
+                    To systematically compromise the hardware, software, and service supply chains utilized across a target nation's critical sectors (government, infrastructure, economy) to embed vulnerabilities, enable persistent access, facilitate future disruption, or degrade trust in technology procurement.
+                </div>
+            </div>
+            <div class="technique-cell" data-target="details-T6000"> <span class="technique-id">T6000</span>
+                <span class="technique-name">Systemic Compromise</span>
+                <div class="technique-details" id="details-T6000">
+                    <h4>Strategist Description</h4>
+                    <p>To systematically compromise the hardware, software, and service supply chains utilized across a target nation's critical sectors (government, infrastructure, economy) to embed vulnerabilities, enable persistent access, facilitate future disruption, or degrade trust in technology procurement. This goes beyond targeting a single entity's supply chain (like a defense contractor) to a broader, systemic approach.</p>
+                    <h4>Key Attack Surfaces</h4>
+                    <p>Third-party software vendors, hardware manufacturers, managed service providers (MSPs), cloud service providers, open-source software repositories, firmware update mechanisms.</p>
+                    <h4>Core Techniques/Sub-techniques</h4> <ul>
+                        <li><strong>T6001:</strong> Compromise of Software Build Environments: Injecting malicious code during the development/compilation process (e.g., SolarWinds).</li>
+                        <li><strong>T6002:</strong> Distribution of Trojanized Hardware Components: Embedding backdoors or vulnerabilities in physical components (chips, routers) during manufacturing.</li>
+                        <li><strong>T6003:</strong> Open-Source Repository Poisoning: Introducing malicious code into widely used open-source libraries depended upon by numerous downstream projects.</li>
+                        <li><strong>T6004:</strong> Compromise of Update Mechanisms: Hijacking legitimate software/firmware update channels to push malicious payloads.</li>
+                        <li><strong>T6005:</strong> Exploitation of Managed Service Providers (MSPs): Gaining access to MSPs to leverage their trusted access into multiple client networks.</li>
+                    </ul>
+                </div>
+            </div>
+        </div> </div> <script>
+        // Simple script to toggle visibility of technique details
+        document.addEventListener('DOMContentLoaded', () => {
+            const techniqueCells = document.querySelectorAll('.technique-cell');
+
+            techniqueCells.forEach(cell => {
+                cell.addEventListener('click', (event) => {
+                    // Prevent toggling if clicking inside the details area itself
+                    if (event.target.closest('.technique-details')) {
+                        return;
+                    }
+
+                    const targetId = cell.getAttribute('data-target');
+                    const detailsDiv = document.getElementById(targetId);
+
+                    if (detailsDiv) {
+                        // Track if the clicked div was already open
+                        const wasOpen = detailsDiv.style.display === 'block';
+
+                        // Close all other open details
+                        document.querySelectorAll('.technique-details').forEach(detail => {
+                           // Always close others, even if clicking the same one again
+                           if (detail.id !== targetId) {
+                                detail.style.display = 'none';
+                           }
+                        });
+
+                        // Toggle the clicked one (if it wasn't open, open it; if it was open, close it)
+                        detailsDiv.style.display = wasOpen ? 'none' : 'block';
+                    }
+                });
+            });
+        });
+    </script>
+
+</body>
+</html>
